@@ -1,0 +1,40 @@
+{
+  "name": "example-pear-react-hypercore-js",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "clean": "rm -rf build",
+    "build:swc": "npm run clean && swc src -d build --copy-files",
+    "build:swc:watch": "npm run build:swc -- --watch --config-file .swcrcdev",
+    "build": "npm run build:swc",
+    "start": "pear run .",
+    "dev:start": "RUN_ENV=dev pear run -d .",
+    "dev:watch": "concurrently --kill-others --kill-others-on-fail \"npm run build:swc:watch\" \"npm run dev:start\"",
+    "dev": "npm run dev:watch"
+  },
+  "dependencies": {
+    "b4a": "^1.6.7",
+    "corestore": "^6.18.4",
+    "hyperswarm": "^4.8.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.6.0",
+    "@swc/core": "^1.11.5",
+    "chokidar": "^4.0.3",
+    "concurrently": "^9.1.2",
+    "pear-hotmods": "^1.0.3",
+    "pear-interface": "^1.0.3",
+    "react-refresh": "^0.16.0"
+  },
+  "pear": {
+    "gui": {
+      "backgroundColor": "#1F2430",
+      "height": "600",
+      "width": "800"
+    }
+  }
+}
