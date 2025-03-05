@@ -1,5 +1,5 @@
 # Overview
-- Example of Pear desktop app with Javascript + React + Hyperswarm + Hypercore
+- Example of Pear desktop app with Javascript + React + Hyperswarm + Corestore
 - Multiple app instances can run concurrently (same machine or different machines) 
 to connect and replicate messages
 
