@@ -45,7 +45,6 @@ export async function createStoreReader ({ name = 'reader', coreKeyWriter, onDat
 
   const core1 = store.get({ key: coreKeyWriter, valueEncoding: 'json' })
   await core1.ready()
-  swarm.on('connection', conn => core1.replicate(conn))
 
   console.log('joining', b4a.toString(core1.discoveryKey, 'hex'))
   const foundPeers = core1.findingPeers()
