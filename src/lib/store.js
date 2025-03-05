@@ -17,6 +17,7 @@ export async function createStoreWriter ({ name = 'writer' } = {}) {
   console.log('starting writer')
   const store = new Corestore(path.join(Pear.config.storage, name))
   await store.ready()
+  swarm.on('connection', (conn) => store.replicate(conn))
 
   const core1 = store.get({ name: 'core-1', valueEncoding: 'json' })
   const core2 = store.get({ name: 'core-2' })
@@ -25,7 +26,6 @@ export async function createStoreWriter ({ name = 'writer' } = {}) {
 
   console.log('joining', b4a.toString(core1.discoveryKey, 'hex'))
   swarm.join(core1.discoveryKey)
-  swarm.on('connection', (conn) => store.replicate(conn))
 
   console.log('appending', core1.length)
   if (core1.length === 0) {
@@ -45,11 +45,11 @@ export async function createStoreReader ({ name = 'reader', coreKeyWriter, onDat
 
   const core1 = store.get({ key: coreKeyWriter, valueEncoding: 'json' })
   await core1.ready()
+  swarm.on('connection', conn => core1.replicate(conn))
 
   console.log('joining', b4a.toString(core1.discoveryKey, 'hex'))
   const foundPeers = core1.findingPeers()
   swarm.join(core1.discoveryKey)
-  swarm.on('connection', conn => core1.replicate(conn))
   swarm.flush().then(() => foundPeers())
 
   console.log('updating')
