@@ -6,7 +6,7 @@
   "main": "index.html",
   "scripts": {
     "clean": "rm -rf build",
-    "build:swc": "npm run clean && swc src -d build --copy-files",
+    "build:swc": "swc src -d build --copy-files",
     "build:swc:watch": "npm run build:swc -- --watch --config-file .swcrcdev",
     "build": "npm run build:swc",
     "start": "pear run .",
