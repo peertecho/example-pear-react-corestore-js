@@ -51,8 +51,9 @@ export async function createStoreReader ({ name = 'reader', coreKeyWriter, onDat
   teardown(() => core1.close())
   await core1.ready()
 
+  const done = core1.findingPeers()
   swarm.join(core1.discoveryKey)
-  swarm.flush()
+  swarm.flush().then(done, done)
 
   await core1.update()
 
