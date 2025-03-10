@@ -16,18 +16,21 @@ teardown(() => swarm.destroy())
 export async function createStoreWriter ({ name = 'writer' } = {}) {
   console.log('starting writer')
   const store = new Corestore(path.join(Pear.config.storage, name))
+  teardown(() => store.close())
   await store.ready()
   swarm.on('connection', (conn) => store.replicate(conn))
 
   const core1 = store.get({ name: 'core-1', valueEncoding: 'json' })
+  teardown(() => core1.close())
   const core2 = store.get({ name: 'core-2' })
+  teardown(() => core2.close())
   const core3 = store.get({ name: 'core-3' })
+  teardown(() => core3.close())
   await Promise.all([core1.ready(), core2.ready(), core3.ready()])
 
-  console.log('joining', b4a.toString(core1.discoveryKey, 'hex'))
   swarm.join(core1.discoveryKey)
+  swarm.flush()
 
-  console.log('appending', core1.length)
   if (core1.length === 0) {
     await core1.append({
       otherKeys: [core2, core3].map((core) => b4a.toString(core.key, 'hex'))
@@ -40,18 +43,17 @@ export async function createStoreWriter ({ name = 'writer' } = {}) {
 export async function createStoreReader ({ name = 'reader', coreKeyWriter, onData } = {}) {
   console.log('starting reader', coreKeyWriter)
   const store = new Corestore(path.join(Pear.config.storage, name))
+  teardown(() => store.close())
   await store.ready()
   swarm.on('connection', (conn) => store.replicate(conn))
 
   const core1 = store.get({ key: coreKeyWriter, valueEncoding: 'json' })
+  teardown(() => core1.close())
   await core1.ready()
 
-  console.log('joining', b4a.toString(core1.discoveryKey, 'hex'))
-  const foundPeers = core1.findingPeers()
   swarm.join(core1.discoveryKey)
-  swarm.flush().then(() => foundPeers())
+  swarm.flush()
 
-  console.log('updating')
   await core1.update()
 
   if (core1.length === 0) {
