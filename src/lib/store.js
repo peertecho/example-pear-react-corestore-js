@@ -29,7 +29,7 @@ export async function createStoreWriter ({ name = 'writer' } = {}) {
   await Promise.all([core1.ready(), core2.ready(), core3.ready()])
 
   swarm.join(core1.discoveryKey)
-  swarm.flush()
+  await swarm.flush()
 
   if (core1.length === 0) {
     await core1.append({
@@ -51,9 +51,8 @@ export async function createStoreReader ({ name = 'reader', coreKeyWriter, onDat
   teardown(() => core1.close())
   await core1.ready()
 
-  const done = core1.findingPeers()
   swarm.join(core1.discoveryKey)
-  swarm.flush().then(done, done)
+  await swarm.flush()
 
   await core1.update()
 
